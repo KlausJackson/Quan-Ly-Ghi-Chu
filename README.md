@@ -51,10 +51,8 @@ flutter create project_name
 ```bash
 lib/
 ├── core/
-│   ├── constants/ 
-│   │   └── app_constants.dart
-│   └── helpers/ 
-│       └── date_formatter.dart
+│   ├── constants.dart
+│   └── date_formatter.dart
 │
 ├── data/ 
 │   ├── models/
@@ -62,7 +60,7 @@ lib/
 │   │   ├── tag.dart
 │   │   └── user.dart
 │   │
-│   ├── datasources/
+│   ├── sources/
 │   │   ├── local.dart   # local device database
 │   │   └── remote.dart  # web API
 │   │
@@ -84,6 +82,7 @@ lib/
     │   ├── notes/
     │   │   ├── note_list.dart
     │   │   └── note_edit.dart
+    │   │   └── trashed_list.dart
     │   └── tags/
     │       └── tag_list.dart
     │
