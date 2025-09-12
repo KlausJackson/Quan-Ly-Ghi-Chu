@@ -1,6 +1,6 @@
 # Quan-Ly-Ghi-Chu
 
-flutter create project_name
+flutter create noteapp
 
 ## API
 
@@ -81,7 +81,7 @@ lib/
     │   │   └── auth.dart
     │   ├── notes/
     │   │   ├── note_list.dart
-    │   │   └── note_edit.dart
+    │   │   ├── note_edit.dart
     │   │   └── trashed_list.dart
     │   └── tags/
     │       └── tag_list.dart
@@ -118,13 +118,9 @@ BottomNavigation to switch between Note List, Tag List, Trashed List.
 
 | Component          |  API  | Standard Widgets | Reusable Widgets | Description |
 | ------------------ | ----- | ---------------- | ---------------- | ----------- |
-| **Login <br> Register** | POST /api/v1/auth/register<br>POST /api/v1/auth/login | TextField, TextButton, CircularProgressIndicator, ListView, Card | CustomTextField | Input validation.<br />Includes a list of locally saved user profiles below the form for quick login selection. |
-| **Notes List**     | GET /api/v1/notes | ListView / GridView, FloatingActionButton, RefreshIndicator, CheckboxListTile, CircularProgressIndicator | Search & Filter Bar<br>Note Card | Search & Filter bar next to Account button (right) on top. <br> Displays notes in a list or grid.<br> Pull-to-refresh action to sync data. Floating Action Button to create a new note. |
-| **Note Edit**      | POST /api/v1/notes<br>PUT /api/v1/notes/id<br>DELETE /api/v1/notes/id | TextField, ListView, Wrap, IconButton, TextButton | Tag Chip | Dynamic list of body blocks, can turn the current line into a text or checklist. Tag selection interface, save/delete actions. |
-| **Trashed List**  | GET /api/v1/notes/trash <br>PUT /api/v1/notes/id/restore <br> DELETE /api/v1/notes/trash/id | ListView, ListTile, CheckboxListTile, AlertDialog | Search & Filter Bar<br>Note Card | Displays deleted notes. Users can either restore a note back to the main list or permanently delete it. |
-| **Tag List**       | POST /api/v1/tags<br>GET /api/v1/tags<br>PUT /api/v1/tags/id<br>DELETE /api/v1/tags/id | FloatingActionButton, CheckboxListTile, ListView, ListTile, IconButton, AlertDialog, TextField | Tag Chip | A list of all user tags. Create, rename, deleting via dialogs. |
-
-
-
-
+| **Login; Register** | POST /api/v1/auth/register; POST /api/v1/auth/login | TextField, TextButton, CircularProgressIndicator, ListView, Card | CustomTextField | Input validation. Includes a list of locally saved user profiles below the form for quick login selection. |
+| **Notes List**     | GET /api/v1/notes | ListView / GridView, FloatingActionButton, RefreshIndicator, CheckboxListTile, CircularProgressIndicator | Search & Filter Bar<br>Note Card | - Search & Filter bar next to Account button (right) on top.<br>- Displays notes in a list or grid.<br>- Pull-to-refresh action to sync data.<br>- Floating Action Button to create a new note. |
+| **Note Edit**      | POST /api/v1/notes<br>PUT /api/v1/notes/id<br>DELETE /api/v1/notes/id | TextField, ListView, Wrap, IconButton, TextButton | Tag Chip | <ul><li>Dynamic list of body blocks: can turn the current line into a text or checklist.</li><li>Tag selection interface.</li><li>Save/delete actions.</li></ul> |
+| **Trashed List**  | GET /api/v1/notes/trash <br>PUT /api/v1/notes/id/restore <br> DELETE /api/v1/notes/trash/id | ListView, ListTile, CheckboxListTile, AlertDialog | Search & Filter Bar<br>Note Card | - Displays deleted notes.<br>- Users can restore a note back to the main list or permanently delete notes. |
+| **Tag List**       | POST /api/v1/tags<br>GET /api/v1/tags<br>PUT /api/v1/tags/id<br>DELETE /api/v1/tags/id | FloatingActionButton, CheckboxListTile, ListView, ListTile, IconButton, AlertDialog, TextField | Tag Chip | <ul><li>List all user tags</li><li>Create new tags</li><li>Rename tags</li><li>Delete tags via dialogs</li></ul> |
 
