@@ -1,6 +1,7 @@
 # Quan-Ly-Ghi-Chu
 
 flutter create noteapp
+See API requests and responses examples in [Task Manager](https://github.com/KlausJackson/Task-Manager)
 
 ## API
 
@@ -15,7 +16,7 @@ flutter create noteapp
 
 <hr>
 
-> **Person 2**
+> **Nguyen Anh Van**
 
 | No. | Method | Route                    | Description                         |
 | --- | ------ | ------------------------ | ----------------------------------- |
@@ -37,7 +38,7 @@ flutter create noteapp
 
 <hr>
 
-> **Person 4**
+> **Nguyen Truong**
 
 | No. | Method | Route                    | Description                         |
 | --- | ------ | ------------------------ | ----------------------------------- |
@@ -73,7 +74,8 @@ lib/
 ├── logic/              # State Management
 │   ├── auth.dart
 │   ├── note.dart
-│   └── tag.dart
+│   ├── tag.dart
+│   └── sync.dart
 │
 └── presentation/ 
     ├── screens/ 
