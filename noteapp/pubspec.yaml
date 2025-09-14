@@ -31,6 +31,17 @@ dependencies:
   flutter:
     sdk: flutter
 
+  provider: ^6.1.1  # For State Management
+  dio: ^5.3.3  # For API calls (Networking)
+
+  # For Offline Storage
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+
+  flutter_secure_storage: ^9.0.0  # For securely storing the auth token
+
+
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -38,6 +49,12 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  # For Hive model generation
+  hive_generator: ^2.0.1
+  build_runner: ^2.4.6
+
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
