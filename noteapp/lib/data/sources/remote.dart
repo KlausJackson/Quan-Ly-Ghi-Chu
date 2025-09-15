@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:noteapp/core/contants.dart';
@@ -28,6 +30,7 @@ class Remote {
     }
   }
 
+  // ---- AUTH ----
   Future<Response> authenticate({
     required String route,
     required String username,
@@ -51,7 +54,19 @@ class Remote {
     }
   }
 
+  // ---- SYNC ----
+  Future<Response> syncData(Map<String, dynamic> payload) async {
+    try {
+      return await _dio.post('/sync', data: payload);
+    } on DioException catch (e) {
+      throw eMessage(e);
+    }
+  }
+
   // ---- NOTES ----
+
+
+
   // ---- TAGS ----
 }
 

@@ -46,6 +46,12 @@ class Local {
     }
   }
 
+    Future<String?> getLastSynced(String username) async {
+        final profiles = Hive.box<User>(profilesTable);
+        final user = profiles.get(username);
+        return user?.lastSynced;
+    }
+
   // ----- USERS LIST -----
   Future<String> getCurrentUser() async {
     final token = await getToken();
@@ -94,6 +100,58 @@ class Local {
     final profiles = Hive.box<User>(profilesTable);
     return profiles.values.toList();
   }
+
+  // ----- SYNC -----
+    Future<Map<String, dynamic>> offlineChanges(String currentUser) async {
+        String? lastSynced = await getLastSynced(currentUser);
+        Map<String, List<dynamic>> notesChanges = {
+          'created': [],
+          'updated': [],
+          'deleted': [],
+        };
+        Map<String, List<dynamic>> tagsChanges = {
+          'created': [],
+          'updated': [],
+          'deleted': [],
+        };
+        if (lastSynced == null) { // First time sync, send all data
+            // final notesBox = Hive.box<Note>('notes_$currentUser');
+            // final tagsBox = Hive.box<Tag>('tags_$currentUser');
+            // notesChanges['created'] = notesBox.values.map((n) => n.toJson()).toList();
+            // tagsChanges['created'] = tagsBox.values.map((t) => t.toJson()).toList();
+        } else {
+            // DateTime lastSyncTime = DateTime.parse(lastSynced);
+            // final notesBox = Hive.box<Note>('notes_$currentUser');
+            // final tagsBox = Hive.box<Tag>('tags_$currentUser');
+
+            // for (var note in notesBox.values) {
+            //     if (note.deleted && note.updatedAt.isAfter(lastSyncTime)) {
+            //         notesChanges['deleted']!.add(note.id);
+            //     } else if (note.createdAt.isAfter(lastSyncTime)) {
+            //         notesChanges['created']!.add(note.toJson());
+            //     } else if (note.updatedAt.isAfter(lastSyncTime)) {
+            //         notesChanges['updated']!.add(note.toJson());
+            //     }
+            // } 
+
+            // for (var tag in tagsBox.values) {
+            //     if (tag.deleted && tag.updatedAt.isAfter(lastSyncTime)) {
+            //         tagsChanges['deleted']!.add(tag.id);
+            //     } else if (tag.createdAt.isAfter(lastSyncTime)) {
+            //         tagsChanges['created']!.add(tag.toJson());
+            //     } else if (tag.updatedAt.isAfter(lastSyncTime)) {
+            //         tagsChanges['updated']!.add(tag.toJson());
+            //     }
+            // }
+        }
+
+        return {
+          'lastSynced': lastSynced,
+          'notes': notesChanges,
+          'tags': tagsChanges,
+        };
+    }
+
 
   // ---- NOTES ----
 

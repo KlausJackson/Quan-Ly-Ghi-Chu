@@ -5,8 +5,8 @@ import 'package:noteapp/data/services/auth_service.dart';
 import 'package:noteapp/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:noteapp/presentation/screens/notes/note_list.dart';
-// import 'package:noteapp/presentation/screens/tags/tag_list.dart';
-// import 'package:noteapp/presentation/screens/trash/trash_list.dart';
+import 'package:noteapp/presentation/screens/tags/tag_list.dart';
+import 'package:noteapp/presentation/screens/notes/trashed_list.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,8 +67,8 @@ class _MainLayoutScreenState extends State<MainLayoutScreen> {
 
     final List<Widget> screens = [
       NoteListScreen(currentUser: currentUser),
-      const Center(child: Text('Tags List')),
-      const Center(child: Text('Trash')),
+      TagListScreen(currentUser: currentUser),
+      TrashListScreen(currentUser: currentUser),
     ];
 
     return Scaffold(

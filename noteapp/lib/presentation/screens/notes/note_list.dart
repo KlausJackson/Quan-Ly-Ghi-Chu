@@ -13,7 +13,7 @@ class NoteListScreen extends StatelessWidget {
       appBar: AppBar(
         title: TextField(
           decoration: InputDecoration(
-            hintText: 'Search notes...',
+            hintText: 'Tim kiem ghi chu...',
             border: InputBorder.none,
             prefixIcon: Icon(
               Icons.search,
