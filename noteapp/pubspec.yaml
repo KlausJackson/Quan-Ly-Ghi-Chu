@@ -32,13 +32,15 @@ dependencies:
     sdk: flutter
 
   provider: ^6.1.1  # For State Management
-  dio: ^5.3.3  # For API calls (Networking)
+  dio: ^5.3.3  # For API
+  get_it: ^8.2.0 # For Dependency Injection
+  flutter_secure_storage: ^9.0.0  # For securely storing the auth token
 
   # For Offline Storage
   hive: ^2.2.3
   hive_flutter: ^1.1.0
 
-  flutter_secure_storage: ^9.0.0  # For securely storing the auth token
+
 
 
 

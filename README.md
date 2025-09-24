@@ -49,6 +49,149 @@ See API requests and responses examples in [Task Manager](https://github.com/Kla
 
 ## Project Architecture
 
+### NEW
+
+Chuyen sang branch clean-architecture nhe anh em.
+
+```bash
+lib/
+├── core/
+# │   ├── error/
+# │   │   ├── exceptions.dart
+# │   │   └── failure.dart
+│   ├── network/
+│   │   └── api_client.dart   
+│   ├── routing/
+│   │   └── app_router.dart
+│   ├── dependencies/
+│   │   └── dependency_injection.dart
+│   └── constants.dart
+│
+├── features/
+│   ├── auth/
+│   │   ├── auth_dependencies.dart
+│   │   ├── data/
+│   │   │   ├── datasources/
+│   │   │   │   ├── auth_remote.dart
+│   │   │   │   └── auth_local.dart
+│   │   │   ├── models/
+│   │   │   │   └── user_model.dart
+│   │   │   └── repositories/
+│   │   │       └── auth_repository_impl.dart
+│   │   ├── domain/
+│   │   │   ├── entities/
+│   │   │   │   └── user.dart
+│   │   │   ├── repositories/
+│   │   │   │   └── auth_repository.dart
+│   │   │   └── usecases/
+│   │   │       ├── get_current_user.dart
+│   │   │       ├── login.dart
+│   │   │       ├── logout.dart
+│   │   │       ├── register.dart
+│   │   │       ├── delete_user.dart
+│   │   │       ├── get_saved_users.dart
+│   │   │       └── delete_saved_user.dart
+│   │   └── presentation/
+│   │       ├── provider/
+│   │       │   └── auth_provider.dart
+│   │       ├── pages/
+│   │       │   └── auth_page.dart
+│   │       └── widgets/
+│   │           ├── user_list.dart
+│   │           └── auth_form.dart
+│   │
+│   ├── sync/
+│   │   ├── data/
+│   │   │   ├── datasources/
+│   │   │   │   └── sync_remote.dart
+│   │   │   └── repositories/
+│   │   │       └── sync_repository_impl.dart
+│   │   ├── domain/
+│   │   │   ├── repositories/
+│   │   │   │   └── sync_repository.dart
+│   │   │   └── usecases/
+│   │   │       └── perform_sync.dart 
+│   │   └── presentation/
+│   │       └── provider/
+│   │           └── sync_provider.dart
+│   │
+│   ├── notes/
+│   │   ├── note_dependencies.dart
+│   │   ├── data/
+│   │   │   ├── datasources/
+│   │   │   │   ├── note_remote.dart
+│   │   │   │   └── note_local.dart
+│   │   │   ├── models/
+│   │   │   │   ├── block_model.dart
+│   │   │   │   └── note_model.dart
+│   │   │   └── repositories/
+│   │   │       └── note_repository_impl.dart
+│   │   ├── domain/
+│   │   │   ├── entities/
+│   │   │   │   ├── block.dart
+│   │   │   │   └── note.dart
+│   │   │   ├── repositories/
+│   │   │   │   └── note_repository.dart
+│   │   │   └── usecases/
+│   │   │       ├── create_note.dart
+│   │   │       ├── get_notes.dart
+│   │   │       ├── update_note.dart
+│   │   │       ├── delete_note.dart
+│   │   │       ├── get_trashed_notes.dart
+│   │   │       ├── restore_note.dart
+│   │   │       └── permanently_delete_note.dart
+│   │   └── presentation/
+│   │       ├── provider/
+│   │       │   └── note_provider.dart
+│   │       ├── pages/
+│   │       │   ├── note_page.dart
+│   │       │   ├── edit_page.dart
+│   │       │   └── trash_page.dart
+│   │       └── widgets/
+│   │           ├── note_card.dart
+│   │           └── search_filter_bar.dart
+│   │
+│   └── tags/
+│       ├── tag_dependencies.dart
+│       ├── data/
+│       │   ├── datasources/
+│       │   │   ├── tag_remote.dart
+│       │   │   └── tag_local.dart
+│       │   ├── models/
+│       │   │   └── tag_model.dart
+│       │   └── repositories/
+│       │       └── tag_repository_impl.dart
+│       ├── domain/
+│       │   ├── entities/
+│       │   │   └── tag.dart
+│       │   ├── repositories/
+│       │   │   └── tag_repository.dart
+│       │   └── usecases/
+│       │       ├── create_tag.dart
+│       │       ├── get_tags.dart
+│       │       ├── update_tag.dart
+│       │       └── delete_tag.dart
+│       └── presentation/
+│           ├── provider/
+│           │   └── tag_provider.dart
+│           ├── pages/
+│           │   └── tag_list_page.dart
+│           └── widgets/
+│               └── tag_chip.dart
+│
+├── presentation/ 
+│   ├── pages/ 
+│   │   └── main_layout_page.dart 
+│   └── widgets/ 
+│       ├── menu_drawer.dart
+│       └── show_dialogs.dart 
+│
+├── app.dart
+└── main.dart
+```
+
+### OLD
+
 ```bash
 lib/
 ├── core/
@@ -99,10 +242,6 @@ lib/
 
 1.  **Fresh Start (Khởi đầu mới):** Người dùng mới có thể tạo ghi chú (notes) và thẻ (tags) mà không cần tài khoản. Dữ liệu được lưu trữ cục bộ trên thiết bị, liên kết với một hồ sơ mặc định chỉ có ở local. Để xóa một tài khoản, người dùng phải đăng nhập, nhập lại mật khẩu để xác nhận. Sau khi xóa thành công, người dùng sẽ cần đăng nhập vào một tài khoản khác hoặc có thể tiếp tục sử dụng ứng dụng ngoại tuyến (offline) mà không cần đăng nhập.
 2.  **Optional Registration (Đăng ký tùy chọn):** Người dùng có thể chọn đăng ký tài khoản. Khi đăng ký, ứng dụng sẽ kích hoạt một quy trình đồng bộ hóa (sync), đẩy tất cả dữ liệu được tạo cục bộ lên máy chủ và liên kết nó với tài khoản mới.
-3.  **Layered Communication (Kiến trúc phân lớp):**
-    *   **Presentation (UI)** gửi các sự kiện của người dùng (user events) đến các **Providers**.
-    *   **Providers** thực thi logic nghiệp vụ (business logic) và gọi các phương thức (methods) trên các **Services**.
-    *   **Services** lấy dữ liệu từ **Local Storage** (bộ nhớ cục bộ) trước khi lấy từ **API**.
 
 ## Presentation (Lớp Giao Diện)
 
