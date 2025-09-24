@@ -49,6 +49,147 @@ See API requests and responses examples in [Task Manager](https://github.com/Kla
 
 ## Project Architecture
 
+### NEW
+
+Chuyen sang branch clean-architecture nhe anh em. Branch main bay gio de tham khao thoi.
+
+```bash
+lib/
+├── core/
+# │   ├── error/
+# │   │   ├── exceptions.dart
+# │   │   └── failure.dart
+│   ├── network/
+│   │   └── api_client.dart   
+│   ├── routing/
+│   │   └── app_router.dart
+│   ├── dependencies/
+│   │   └── dependency_injection.dart
+│   └── constants.dart
+│
+├── features/
+│   ├── auth/
+│   │   ├── auth_dependencies.dart
+│   │   ├── data/
+│   │   │   ├── datasources/
+│   │   │   │   ├── auth_remote.dart
+│   │   │   │   └── auth_local.dart
+│   │   │   ├── models/
+│   │   │   │   └── user_model.dart
+│   │   │   └── repositories/
+│   │   │       └── auth_repository_impl.dart
+│   │   ├── domain/
+│   │   │   ├── entities/
+│   │   │   │   └── user.dart
+│   │   │   ├── repositories/
+│   │   │   │   └── auth_repository.dart
+│   │   │   └── usecases/
+│   │   │       ├── get_current_user.dart
+│   │   │       ├── login.dart
+│   │   │       ├── logout.dart
+│   │   │       ├── register.dart
+│   │   │       ├── delete_user.dart
+│   │   │       ├── get_saved_users.dart
+│   │   │       └── delete_saved_user.dart
+│   │   └── presentation/
+│   │       ├── provider/
+│   │       │   └── auth_provider.dart
+│   │       ├── pages/
+│   │       │   └── auth_page.dart
+│   │       └── widgets/
+│   │           ├── user_list.dart
+│   │           └── auth_form.dart
+│   │
+│   ├── sync/
+│   │   ├── data/
+│   │   │   ├── datasources/
+│   │   │   │   └── sync_remote.dart
+│   │   │   └── repositories/
+│   │   │       └── sync_repository_impl.dart
+│   │   ├── domain/
+│   │   │   ├── repositories/
+│   │   │   │   └── sync_repository.dart
+│   │   │   └── usecases/
+│   │   │       └── perform_sync.dart 
+│   │   └── presentation/
+│   │       └── provider/
+│   │           └── sync_provider.dart
+│   │
+│   ├── notes/
+│   │   ├── note_dependencies.dart
+│   │   ├── data/
+│   │   │   ├── datasources/
+│   │   │   │   ├── note_remote.dart
+│   │   │   │   └── note_local.dart
+│   │   │   ├── models/
+│   │   │   │   ├── block_model.dart
+│   │   │   │   └── note_model.dart
+│   │   │   └── repositories/
+│   │   │       └── note_repository_impl.dart
+│   │   ├── domain/
+│   │   │   ├── entities/
+│   │   │   │   ├── block.dart
+│   │   │   │   └── note.dart
+│   │   │   ├── repositories/
+│   │   │   │   └── note_repository.dart
+│   │   │   └── usecases/
+│   │   │       ├── create_note.dart
+│   │   │       ├── get_notes.dart
+│   │   │       ├── update_note.dart
+│   │   │       ├── delete_note.dart
+│   │   │       ├── get_trashed_notes.dart
+│   │   │       ├── restore_note.dart
+│   │   │       └── permanently_delete_note.dart
+│   │   └── presentation/
+│   │       ├── provider/
+│   │       │   └── note_provider.dart
+│   │       ├── pages/
+│   │       │   ├── note_page.dart
+│   │       │   ├── edit_page.dart
+│   │       │   └── trash_page.dart
+│   │       └── widgets/
+│   │           ├── note_card.dart
+│   │           └── search_filter_bar.dart
+│   │
+│   └── tags/
+│       ├── tag_dependencies.dart
+│       ├── data/
+│       │   ├── datasources/
+│       │   │   ├── tag_remote.dart
+│       │   │   └── tag_local.dart
+│       │   ├── models/
+│       │   │   └── tag_model.dart
+│       │   └── repositories/
+│       │       └── tag_repository_impl.dart
+│       ├── domain/
+│       │   ├── entities/
+│       │   │   └── tag.dart
+│       │   ├── repositories/
+│       │   │   └── tag_repository.dart
+│       │   └── usecases/
+│       │       ├── create_tag.dart
+│       │       ├── get_tags.dart
+│       │       ├── update_tag.dart
+│       │       └── delete_tag.dart
+│       └── presentation/
+│           ├── provider/
+│           │   └── tag_provider.dart
+│           ├── pages/
+│           │   └── tag_list_page.dart
+│           └── widgets/
+│               └── tag_chip.dart
+│
+├── presentation/ 
+│   ├── pages/ 
+│   │   └── main_layout_page.dart 
+│   └── widgets/ 
+│       ├── menu_drawer.dart
+│       └── show_dialogs.dart 
+│
+├── app.dart
+└── main.dart
+```
+
 ```bash
 lib/
 ├── core/
