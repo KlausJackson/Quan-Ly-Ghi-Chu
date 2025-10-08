@@ -44,4 +44,21 @@ class AuthLocal {
   Future<void> deleteCurrentUser() async {
     await secureStorage.delete(key: 'currentUser');
   }
+
+  // --- Last Synced ---
+  Future<void> updateLastSynced(String username, String timestamp) async {
+    final user = profilesBox.get(username);
+    if (user != null) {
+      final updatedUser = UserModel(
+        username: user.username,
+        lastSynced: timestamp,
+      );
+      await profilesBox.put(username, updatedUser);
+    }
+  }
+
+  Future<String?> getLastSynced(String username) async {
+    final user = profilesBox.get(username);
+    return user?.lastSynced;
+  }
 }

@@ -49,13 +49,6 @@ class MenuDrawer extends StatelessWidget {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.label),
-                title: const Text('Thẻ'),
-                onTap: () {
-                  Navigator.of(context).pushReplacementNamed('/tags');
-                },
-              ),
-              ListTile(
                 leading: const Icon(Icons.delete),
                 title: const Text('Rác'),
                 onTap: () {

@@ -5,7 +5,7 @@ class GetNotes {
   final NoteRepository noteRepository;
   GetNotes({required this.noteRepository});
 
-  Future<List<Note>> call() async {
-    return await noteRepository.getNotes();
+  Future<Map<String, dynamic>> call(String? query, String sortBy, int sortOrder, int page, int pageSize) async {
+    return await noteRepository.getNotes(query, sortBy, sortOrder, page, pageSize);
   }
 }

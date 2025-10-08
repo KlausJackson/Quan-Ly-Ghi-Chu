@@ -1,35 +1,38 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user_model.dart';
+part of 'block_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class UserModelAdapter extends TypeAdapter<UserModel> {
+class BlockModelAdapter extends TypeAdapter<BlockModel> {
   @override
-  final int typeId = 0;
+  final int typeId = 2;
 
   @override
-  UserModel read(BinaryReader reader) {
+  BlockModel read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return UserModel(
-      username: fields[0] as String,
-      lastSynced: fields[1] as String?,
+    return BlockModel(
+      type: fields[0] as String,
+      text: fields[1] as String,
+      checked: fields[2] as bool,
     );
   }
 
   @override
-  void write(BinaryWriter writer, UserModel obj) {
+  void write(BinaryWriter writer, BlockModel obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
-      ..write(obj.username)
+      ..write(obj.type)
       ..writeByte(1)
-      ..write(obj.lastSynced);
+      ..write(obj.text)
+      ..writeByte(2)
+      ..write(obj.checked);
   }
 
   @override
@@ -38,7 +41,7 @@ class UserModelAdapter extends TypeAdapter<UserModel> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is UserModelAdapter &&
+      other is BlockModelAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

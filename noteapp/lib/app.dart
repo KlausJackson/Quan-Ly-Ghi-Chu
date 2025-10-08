@@ -4,7 +4,7 @@ import 'package:noteapp/core/routes/routes.dart';
 import 'package:noteapp/core/dependencies/dependency_injection.dart'; // service locator
 
 import 'package:noteapp/features/auth/presentation/provider/auth_provider.dart';
-// NoteProvider, TagProvider
+import 'package:noteapp/features/notes/presentation/provider/note_provider.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -14,8 +14,7 @@ class App extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => sl<AuthProvider>()),
-        // ChangeNotifierProvider(create: (_) => sl<NoteProvider>()),
-        // ChangeNotifierProvider(create: (_) => sl<TagProvider>()),
+        ChangeNotifierProvider(create: (_) => sl<NoteProvider>()),
       ],
       child: MaterialApp(
         title: 'NoteApp',

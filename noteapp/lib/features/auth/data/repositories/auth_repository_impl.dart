@@ -20,8 +20,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
     final String token = response['data'];
     final Map<String, dynamic> userJson = {
-      'username': username,
-      'lastSynced': DateTime.now().toIso8601String(),
+      'username': username
     };
     final userModel = UserModel.fromJson(userJson);
 

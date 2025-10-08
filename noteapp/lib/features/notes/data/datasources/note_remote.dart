@@ -17,5 +17,24 @@ class NoteRemote {
     return NoteModel.fromJson(response['data']);
   }
 
-  // TODO: Implement updateNote, deleteNote, getTrashedNotes, etc.
+  Future<NoteModel> updateNote(NoteModel note) async {
+    final response = await apiClient.put('/notes/${note.uuid}', note.toJson());
+    return NoteModel.fromJson(response['data']);
+  }
+
+  Future<Map<String, dynamic>> syncNotes(Map<String, dynamic> payload) async {
+    try {
+      final response = await apiClient.post('/sync', payload);
+      return {
+        'notes': (response['data']['notes'] as List)
+            .map((json) => NoteModel.fromJson(json))
+            .toList(),
+        'timestamp': response['data']['timestamp'],
+      };
+    } catch (e) {
+      rethrow; // Rethrow the formatted exception from ApiClient
+    }
+  }
+
+  // TODO: Implement deleteNote, getTrashedNotes, permanentlyDeleteNote, restoreNote.
 }

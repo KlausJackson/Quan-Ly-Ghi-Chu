@@ -56,9 +56,6 @@ Chuyen sang branch clean-architecture nhe anh em.
 ```bash
 lib/
 ├── core/
-# │   ├── error/
-# │   │   ├── exceptions.dart
-# │   │   └── failure.dart
 │   ├── network/
 │   │   └── api_client.dart   
 │   ├── routing/
@@ -100,84 +97,43 @@ lib/
 │   │           ├── user_list.dart
 │   │           └── auth_form.dart
 │   │
-│   ├── sync/
-│   │   ├── data/
-│   │   │   ├── datasources/
-│   │   │   │   └── sync_remote.dart
-│   │   │   └── repositories/
-│   │   │       └── sync_repository_impl.dart
-│   │   ├── domain/
-│   │   │   ├── repositories/
-│   │   │   │   └── sync_repository.dart
-│   │   │   └── usecases/
-│   │   │       └── perform_sync.dart 
-│   │   └── presentation/
-│   │       └── provider/
-│   │           └── sync_provider.dart
-│   │
-│   ├── notes/
-│   │   ├── note_dependencies.dart
-│   │   ├── data/
-│   │   │   ├── datasources/
-│   │   │   │   ├── note_remote.dart
-│   │   │   │   └── note_local.dart
-│   │   │   ├── models/
-│   │   │   │   ├── block_model.dart
-│   │   │   │   └── note_model.dart
-│   │   │   └── repositories/
-│   │   │       └── note_repository_impl.dart
-│   │   ├── domain/
-│   │   │   ├── entities/
-│   │   │   │   ├── block.dart
-│   │   │   │   └── note.dart
-│   │   │   ├── repositories/
-│   │   │   │   └── note_repository.dart
-│   │   │   └── usecases/
-│   │   │       ├── create_note.dart
-│   │   │       ├── get_notes.dart
-│   │   │       ├── update_note.dart
-│   │   │       ├── delete_note.dart
-│   │   │       ├── get_trashed_notes.dart
-│   │   │       ├── restore_note.dart
-│   │   │       └── permanently_delete_note.dart
-│   │   └── presentation/
-│   │       ├── provider/
-│   │       │   └── note_provider.dart
-│   │       ├── pages/
-│   │       │   ├── note_page.dart
-│   │       │   ├── edit_page.dart
-│   │       │   └── trash_page.dart
-│   │       └── widgets/
-│   │           ├── note_card.dart
-│   │           └── search_filter_bar.dart
-│   │
-│   └── tags/
-│       ├── tag_dependencies.dart
+│   └── notes/
+│       ├── note_dependencies.dart
 │       ├── data/
 │       │   ├── datasources/
-│       │   │   ├── tag_remote.dart
-│       │   │   └── tag_local.dart
+│       │   │   ├── note_remote.dart
+│       │   │   └── note_local.dart
 │       │   ├── models/
-│       │   │   └── tag_model.dart
+│       │   │   ├── block_model.dart
+│       │   │   └── note_model.dart
 │       │   └── repositories/
-│       │       └── tag_repository_impl.dart
+│       │       └── note_repository_impl.dart
 │       ├── domain/
 │       │   ├── entities/
-│       │   │   └── tag.dart
+│       │   │   ├── block.dart
+│       │   │   └── note.dart
 │       │   ├── repositories/
-│       │   │   └── tag_repository.dart
+│       │   │   └── note_repository.dart
 │       │   └── usecases/
-│       │       ├── create_tag.dart
-│       │       ├── get_tags.dart
-│       │       ├── update_tag.dart
-│       │       └── delete_tag.dart
+│       │       ├── create_note.dart
+│       │       ├── get_notes.dart
+│       │       ├── update_note.dart
+│       │       ├── delete_note.dart
+│       │       ├── sync_notes.dart
+│       │       ├── get_trashed_notes.dart
+│       │       ├── restore_note.dart
+│       │       └── permanently_delete_note.dart
 │       └── presentation/
 │           ├── provider/
-│           │   └── tag_provider.dart
+│           │   └── note_provider.dart
 │           ├── pages/
-│           │   └── tag_list_page.dart
+│           │   ├── note_page.dart
+│           │   ├── edit_page.dart
+│           │   └── trash_page.dart
 │           └── widgets/
-│               └── tag_chip.dart
+│               ├── pagination.dart
+│               ├── search_bar.dart
+│               └── note_card.dart
 │
 ├── presentation/ 
 │   ├── pages/ 
@@ -249,7 +205,6 @@ lib/
 
 | Custom Widget           | Description (Mô tả)                                                                         |
 | ----------------------- | ------------------------------------------------------------------------------------------- |
-| **Search & Filter Bar** | Một trường văn bản (text field) để tìm kiếm và một nút để mở bảng điều khiển lọc theo thẻ.     |
 | **Note Card**           | Một thẻ (card) hiển thị bản xem trước của tiêu đề, nội dung và các thẻ của một ghi chú.    |
 | **Tag Chip**            | Một widget nhỏ hình "viên thuốc" hiển thị tên của một thẻ; có thể chọn được. |
 | **Custom ShowDialog**   | Các dialog tùy chỉnh cho mọi trường hợp sử dụng: hủy bỏ, tạo mới, xác nhận, v.v. |
@@ -261,9 +216,9 @@ Sử dụng `BottomNavigation` để chuyển đổi giữa `Note List`, `Tag Li
 | Component           | API                                                                                         | Standard Widgets                                                                                         | Reusable Widgets                 | Description (Mô tả)                                                                                                                                                                             |
 | ------------------- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Login; Register** | POST /api/v1/auth/register; POST /api/v1/auth/login                                         | TextField, TextButton, CircularProgressIndicator, ListView, Card                                         | CustomTextField                  | Input validation. Bao gồm một danh sách các hồ sơ người dùng đã lưu cục bộ bên dưới biểu mẫu để chọn đăng nhập nhanh.                                                            |
-| **Notes List**      | GET /api/v1/notes                                                                           | ListView / GridView, FloatingActionButton, RefreshIndicator, CheckboxListTile, CircularProgressIndicator | Search & Filter Bar<br>Note Card | - Thanh `Search & Filter` bên cạnh nút `Account` (bên phải) ở trên cùng.<br>- Hiển thị ghi chú.<br>- Kéo để làm mới (Pull-to-refresh) để đồng bộ dữ liệu.<br>- `Floating Action Button` để tạo ghi chú mới. |
+| **Notes List**      | GET /api/v1/notes                                                                           | ListView / GridView, FloatingActionButton, RefreshIndicator, CheckboxListTile, CircularProgressIndicator | Note Card | - Thanh `Search & Filter`.<br>- Hiển thị ghi chú.<br>- Kéo để làm mới (Pull-to-refresh) để đồng bộ dữ liệu.<br>- `Floating Action Button` để tạo ghi chú mới. |
 | **Note Edit**       | POST /api/v1/notes<br>PUT /api/v1/notes/id<br>DELETE /api/v1/notes/id                       | TextField, ListView, Wrap, IconButton, TextButton                                                        | Tag Chip                         | <ul><li>Danh sách động các khối nội dung (body blocks): có thể biến dòng hiện tại thành văn bản hoặc dạng văn bản + checkbox (checklist).</li><li>Giao diện chọn thẻ.</li><li>Các hành động lưu/hủy/xóa.</li></ul> |
-| **Trashed List**    | GET /api/v1/notes/trash <br>PUT /api/v1/notes/id/restore <br> DELETE /api/v1/notes/trash/id | ListView, ListTile, CheckboxListTile, AlertDialog                                                        | Search & Filter Bar<br>Note Card | - Hiển thị các ghi chú đã xóa.<br>- Người dùng có thể khôi phục ghi chú trở lại danh sách chính hoặc xóa vĩnh viễn. |
+| **Trashed List**    | GET /api/v1/notes/trash <br>PUT /api/v1/notes/id/restore <br> DELETE /api/v1/notes/trash/id | ListView, ListTile, CheckboxListTile, AlertDialog  | Note Card | - Hiển thị các ghi chú đã xóa.<br>- Người dùng có thể khôi phục ghi chú trở lại danh sách chính hoặc xóa vĩnh viễn. |
 | **Tag List**        | POST /api/v1/tags<br>GET /api/v1/tags<br>PUT /api/v1/tags/id<br>DELETE /api/v1/tags/id       | FloatingActionButton, CheckboxListTile, ListView, ListTile, IconButton, AlertDialog, TextField       | Tag Chip                         | <ul><li>Liệt kê tất cả các thẻ của người dùng</li><li>Tạo thẻ mới</li><li>Đổi tên thẻ</li><li>Xóa thẻ thông qua dialogs</li></ul> |
 
 # Hướng Dẫn (Tutorial)
