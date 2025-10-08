@@ -6,7 +6,7 @@ import 'package:noteapp/features/notes/presentation/pages/trash_page.dart';
 import 'package:noteapp/presentation/pages/main_layout_page.dart';
 
 // /notes
-// where to put ?
+// where to put ? in app router or somewhere else
 // /notes/trash
 // /notes/edit 
 
