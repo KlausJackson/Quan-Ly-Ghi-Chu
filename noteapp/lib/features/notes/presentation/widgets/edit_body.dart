@@ -5,11 +5,13 @@ import 'package:noteapp/features/notes/presentation/widgets/editor_toolbar.dart'
 class NoteBodyEditor extends StatefulWidget {
   final List<Block> initialBlocks;
   final List<TextEditingController> bodyControllers;
+  final VoidCallback onChanged;
 
   const NoteBodyEditor({
     super.key,
     required this.initialBlocks,
     required this.bodyControllers,
+    required this.onChanged,
   });
 
   @override
@@ -48,14 +50,17 @@ class _NoteBodyEditorState extends State<NoteBodyEditor> {
 
   void _addBlock(String type) {
     final insertIndex = _currentFocusIndex != -1
-        ? _currentFocusIndex + 1 // Insert after the focused block
+        ? _currentFocusIndex +
+              1 // Insert after the focused block
         : _bodyBlocks.length; // at the end if none focused
 
     setState(() {
       final newBlock = Block(type: type, text: '', checked: false);
       _bodyBlocks.insert(insertIndex, newBlock);
-      widget.bodyControllers.insert(insertIndex, TextEditingController());
-
+      final newController = TextEditingController();
+      newController.addListener(widget.onChanged);
+      widget.bodyControllers.insert(insertIndex, newController);
+      
       final newNode = FocusNode();
       newNode.addListener(() {
         if (newNode.hasFocus) {
@@ -64,7 +69,7 @@ class _NoteBodyEditorState extends State<NoteBodyEditor> {
       });
       _bodyFocusNodes.insert(insertIndex, newNode);
     });
-
+    widget.onChanged(); // notify parent of change
     Future.delayed(const Duration(milliseconds: 50), () {
       if (mounted) {
         FocusScope.of(context).requestFocus(_bodyFocusNodes[insertIndex]);
@@ -122,6 +127,7 @@ class _NoteBodyEditorState extends State<NoteBodyEditor> {
                 checked: newValue ?? false,
               );
             });
+            widget.onChanged(); // notify parent of change
           },
         ),
         Expanded(

@@ -29,6 +29,7 @@ void initAuthDependencies(GetIt sl) {
       getSavedUsersUsecase: sl(),
       deleteSavedUserUsecase: sl(),
       getCurrentUserUsecase: sl(),
+      noteProvider: sl(),
     ),
   );
 

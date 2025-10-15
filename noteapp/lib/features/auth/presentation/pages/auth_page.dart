@@ -56,39 +56,46 @@ class _AuthPageState extends State<AuthPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-       toolbarHeight: 30,
-       centerTitle: true,
+        toolbarHeight: 30,
+        centerTitle: true,
         title: Consumer<AuthProvider>(
           builder: (context, provider, child) {
-            return const Text('Đăng Nhập / Đăng Ký', style: TextStyle(fontSize: 14));
+            return const Text(
+              'Đăng Nhập / Đăng Ký',
+              style: TextStyle(fontSize: 14),
+            );
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // --- Auth Form ---
-            AuthForm(
-              usernameController: _usernameController,
-              passwordController: _passwordController,
-            ),
-            const Divider(height: 20),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // --- Auth Form ---
+                AuthForm(
+                  usernameController: _usernameController,
+                  passwordController: _passwordController,
+                ),
+                const Divider(height: 20),
 
-            // --- Profile List ---
-            const Text(
-              'Người dùng đã lưu',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                // --- Profile List ---
+                const Text(
+                  'Người dùng đã lưu',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 300,
+                  child: UserList(
+                    onUserSelected: (user) {
+                      _usernameController.text = user.username;
+                    },
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            Expanded(
-              child: UserList(
-                onUserSelected: (user) {
-                  _usernameController.text = user.username;
-                },
-              ),
-            ),
-          ],
         ),
       ),
     );

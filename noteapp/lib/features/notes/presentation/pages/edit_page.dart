@@ -23,26 +23,45 @@ class _NoteEditPageState extends State<NoteEditPage> {
   late List<TextEditingController> _bodyControllers;
   late List<Block> _bodyBlocks;
 
+  late Note _originalNote; // snapshot
+  bool _isChanged = false; // Tracks if there are unsaved changes
+
   @override
   void initState() {
     super.initState();
     if (widget.note != null) {
       // --- EDIT MODE ---
-      _titleController = TextEditingController(text: widget.note!.title);
+      _originalNote = widget.note!;
+      _titleController = TextEditingController(text: _originalNote.title);
       _bodyBlocks = List<Block>.from(
-        widget.note!.body,
+        _originalNote.body.map((b) => b.copyWith()),
       ); // Create a mutable copy
     } else {
       // --- CREATE MODE ---
+      _originalNote = Note(
+        uuid: const Uuid().v4(),
+        isPinned: false,
+        title: '',
+        body: [Block(type: 'text', text: '', checked: false)],
+        isDeleted: false,
+        tagUUIDs: [],
+        updatedAt: DateTime.now(),
+      );
       _titleController = TextEditingController();
       // Start with one empty text block.
       _bodyBlocks = [Block(type: 'text', text: '', checked: false)];
+      _isChanged = true; // New note, always "changed"
     }
 
     // Create a TextEditingController for each block.
     _bodyControllers = _bodyBlocks
         .map((block) => TextEditingController(text: block.text))
         .toList();
+
+    _titleController.addListener(_checkForChanges);
+    for (var controller in _bodyControllers) {
+      controller.addListener(_checkForChanges);
+    }
   }
 
   @override
@@ -54,12 +73,38 @@ class _NoteEditPageState extends State<NoteEditPage> {
     super.dispose();
   }
 
-  String _formatDateTime(DateTime? dateTime) {
-    if (dateTime == null) return 'Chua cap nhat';
-    final formatted =
-        '${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
-    return formatted;
-  }
+  void _checkForChanges() {
+    bool hasChanges = false;
+
+    // Compare title and body with the original note.
+    if (_titleController.text != _originalNote.title) hasChanges = true;
+    for (int i = 0; i < _bodyControllers.length; i++) {
+      // INDEX OUT OF RANGE CHECKS
+      if (_bodyControllers.length != _originalNote.body.length) {
+        hasChanges = true;
+        break;
+      } // number of blocks changed
+      if (i >= _originalNote.body.length) {
+        hasChanges = true;
+        break;
+      } // extra blocks added
+
+      // COMPARE CONTENT
+      if (_bodyControllers[i].text != _originalNote.body[i].text) {
+        hasChanges = true;
+      } // text changed
+      if (_bodyBlocks[i].checked != _originalNote.body[i].checked) {
+        hasChanges = true;
+      } // checkbox state changed
+    }
+
+    // If has changedes state differs, update it.
+    if (hasChanges != _isChanged) {
+      setState(() {
+        _isChanged = hasChanges;
+      });
+    }
+  } // called on every keystroke
 
   void _saveNote() {
     for (int i = 0; i < _bodyBlocks.length; i++) {
@@ -71,8 +116,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
     } // Update _bodyBlocks with text from controllers.
 
     final noteToSave = Note(
-      // Use existing UUID if editing, generate new one if creating.
-      uuid: widget.note?.uuid ?? const Uuid().v4(),
+      uuid: _originalNote.uuid,
       title: _titleController.text.trim(),
       body: _bodyBlocks,
       isPinned: false,
@@ -87,6 +131,20 @@ class _NoteEditPageState extends State<NoteEditPage> {
     } else {
       provider.createNote(noteToSave);
     }
+    setState(() {
+      _isChanged = false;
+      _originalNote = noteToSave;
+    });
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Da luu.')));
+  }
+
+  String _formatDateTime(DateTime? dateTime) {
+    if (dateTime == null) return 'Chua cap nhat';
+    final formatted =
+        '${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
+    return formatted;
   }
 
   void _deleteNote() {
@@ -112,7 +170,10 @@ class _NoteEditPageState extends State<NoteEditPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           spacing: 32.0,
           children: [
-            Text(widget.note != null ? 'Chinh sua ghi chu' : 'Tao ghi chu', style: const TextStyle(fontSize: 16)),
+            Text(
+              widget.note != null ? 'Chinh sua ghi chu' : 'Tao ghi chu',
+              style: const TextStyle(fontSize: 16),
+            ),
             if (widget.note != null) // Show last updated time in edit mode
               Text(
                 _formatDateTime(widget.note?.updatedAt),
@@ -136,7 +197,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
           IconButton(
             icon: const Icon(Icons.save),
             tooltip: 'Luu',
-            onPressed: _saveNote,
+            onPressed: _isChanged ? _saveNote : null,
           ),
         ],
       ),
@@ -162,6 +223,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
               child: NoteBodyEditor(
                 initialBlocks: _bodyBlocks,
                 bodyControllers: _bodyControllers,
+                onChanged: _checkForChanges,
               ),
             ),
           ],

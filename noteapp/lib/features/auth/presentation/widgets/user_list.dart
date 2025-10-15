@@ -19,7 +19,7 @@ class UserList extends StatelessWidget {
     return Consumer<AuthProvider>(
       builder: (context, authProvider, child) {
         if (authProvider.profiles.isEmpty) {
-          return const Center(child: Text('Không có người dùng nào.'));
+          return const Text('Không có người dùng nào.');
         }
 
         return Container(

@@ -1,4 +1,3 @@
-import 'package:noteapp/features/notes/domain/entities/note.dart';
 import 'package:noteapp/features/notes/domain/repositories/note_repository.dart';
 
 class GetNotes {

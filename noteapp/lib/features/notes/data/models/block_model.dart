@@ -10,15 +10,12 @@ class BlockModel extends Block {
 
   @HiveField(1)
   final String text;
-  
+
   @HiveField(2)
   final bool checked;
 
-  BlockModel({
-    required this.type,
-    required this.text,
-    required this.checked,
-  }) : super(type: type, text: text, checked: checked);
+  BlockModel({required this.type, required this.text, required this.checked})
+    : super(type: type, text: text, checked: checked);
 
   factory BlockModel.fromJson(Map<String, dynamic> json) {
     return BlockModel(

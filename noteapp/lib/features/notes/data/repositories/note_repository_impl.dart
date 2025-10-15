@@ -28,7 +28,6 @@ class NoteRepositoryImpl implements NoteRepository {
   List<Note> _filterAndSortLocalNotes(
     List<NoteModel> notes, {
     String? query,
-    // default parameters
     String sortBy = 'updatedAt',
     int sortOrder = 1,
     int page = 0,
@@ -138,6 +137,25 @@ class NoteRepositoryImpl implements NoteRepository {
     int pageSize,
   ) async {
     final user = await _getCurrentUser();
+    if (await networkInfo.isConnected && user != 'default') {
+      try {
+        Map<String, dynamic> queryParameters = {
+          'keywords': query ?? '',
+          'sortBy': '$sortBy:${sortOrder == 1 ? 'desc' : 'asc'}',
+          'skip': (page - 1) * pageSize,
+          'limit': pageSize,
+        };
+        final result = await noteRemote.getNotes(queryParameters);
+        final List<NoteModel> serverNotes = (result['notes'] as List)
+            .map((json) => NoteModel.fromJson(json))
+            .toList();
+        final int total = result['total'] ?? serverNotes.length;
+        return {'notes': serverNotes, 'total': total};
+      } catch (e) {
+        // print("Sync failed");
+      }
+    }
+
     final localNotes = await noteLocal.getNotes(user);
     final notes = _filterAndSortLocalNotes(
       localNotes,
@@ -148,17 +166,12 @@ class NoteRepositoryImpl implements NoteRepository {
       pageSize: pageSize,
       isDeleted: false,
     );
-    // return notes and total count for pagination
-    return {
-      'notes': notes,
-      'total': localNotes.length,
-    };
+    return {'notes': notes, 'total': localNotes.length};
   }
 
-  // CHUA TEST CAI NAY DAU
+  // SYNC FAILED
   @override
   Future<void> syncNotes() async {
-    // 1. CHECK CONNECTIVITY
     if (!await networkInfo.isConnected) {
       return;
     }

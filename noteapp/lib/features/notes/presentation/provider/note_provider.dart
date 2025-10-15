@@ -77,7 +77,7 @@ class NoteProvider with ChangeNotifier {
         pageSize,
       );
 
-      _notes = result['notes'];
+      _notes = (result['notes'] as List).cast<Note>();
       _totalNotes = result['total'];
       _status = NoteStatus.success;
     } catch (e) {
@@ -115,6 +115,11 @@ class NoteProvider with ChangeNotifier {
       _message = 'Failed to update note: $e';
       notifyListeners();
     }
+  }
+
+  void clearNotes() {
+    _notes = [];
+    notifyListeners();
   }
 
   Future<void> performSync() async {

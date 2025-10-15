@@ -5,11 +5,14 @@ class NoteRemote {
   final ApiClient apiClient;
   NoteRemote({required this.apiClient});
 
-  Future<List<NoteModel>> getNotes() async {
-    final response = await apiClient.get('/notes');
-    return (response['data'] as List)
-        .map((json) => NoteModel.fromJson(json))
-        .toList();
+  Future<Map<String, dynamic>> getNotes(
+    Map<String, dynamic> queryParameters,
+  ) async {
+    final response = await apiClient.get(
+      '/notes',
+      queryParameters: queryParameters
+    );
+    return response['data'];
   }
 
   Future<NoteModel> createNote(NoteModel note) async {

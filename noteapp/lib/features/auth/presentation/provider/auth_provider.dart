@@ -11,6 +11,7 @@ import 'package:noteapp/features/auth/domain/usecases/delete_user.dart';
 import 'package:noteapp/features/auth/domain/usecases/get_saved_users.dart';
 import 'package:noteapp/features/auth/domain/usecases/delete_saved_user.dart';
 import 'package:noteapp/features/auth/domain/usecases/get_current_user.dart';
+import 'package:noteapp/features/notes/presentation/provider/note_provider.dart';
 
 enum AuthStatus { unauthenticated, authenticating, authenticated, error }
 
@@ -23,6 +24,7 @@ class AuthProvider with ChangeNotifier {
   final GetSavedUsers getSavedUsersUsecase;
   final DeleteSavedUser deleteSavedUserUsecase;
   final GetCurrentUser getCurrentUserUsecase;
+  final NoteProvider noteProvider;
 
   // --- State Properties ---
   AuthStatus _status = AuthStatus.unauthenticated;
@@ -39,6 +41,7 @@ class AuthProvider with ChangeNotifier {
     required this.getSavedUsersUsecase,
     required this.deleteSavedUserUsecase,
     required this.getCurrentUserUsecase,
+    required this.noteProvider,
   }) {
     _initialize();
   }
@@ -126,6 +129,7 @@ class AuthProvider with ChangeNotifier {
   Future<void> logout() async {
     if (!_ensureAuthenticated()) return;
     await logoutUsecase();
+    noteProvider.clearNotes();
     _status = AuthStatus.unauthenticated;
     _message = 'Đăng xuất thành công.';
     notifyListeners();
