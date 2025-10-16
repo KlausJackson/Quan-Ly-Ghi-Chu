@@ -6,12 +6,14 @@ class NoteBodyEditor extends StatefulWidget {
   final List<Block> initialBlocks;
   final List<TextEditingController> bodyControllers;
   final VoidCallback onChanged;
+  final bool readOnly;
 
   const NoteBodyEditor({
     super.key,
     required this.initialBlocks,
     required this.bodyControllers,
     required this.onChanged,
+    this.readOnly = false,
   });
 
   @override
@@ -49,6 +51,7 @@ class _NoteBodyEditorState extends State<NoteBodyEditor> {
   }
 
   void _addBlock(String type) {
+    if (widget.readOnly) return;
     final insertIndex = _currentFocusIndex != -1
         ? _currentFocusIndex +
               1 // Insert after the focused block
@@ -92,10 +95,11 @@ class _NoteBodyEditorState extends State<NoteBodyEditor> {
             },
           ),
         ),
-        EditorToolbar(
-          onAddTextBlock: () => _addBlock('text'),
-          onAddChecklistBlock: () => _addBlock('checklist'),
-        ),
+        if (!widget.readOnly)
+          EditorToolbar(
+            onAddTextBlock: () => _addBlock('text'),
+            onAddChecklistBlock: () => _addBlock('checklist'),
+          ),
       ],
     );
   }
@@ -111,6 +115,7 @@ class _NoteBodyEditorState extends State<NoteBodyEditor> {
       ),
       keyboardType: TextInputType.multiline,
       maxLines: null, // Allows the field to expand vertically
+      enabled: !widget.readOnly,
     );
   }
 
@@ -119,16 +124,18 @@ class _NoteBodyEditorState extends State<NoteBodyEditor> {
       children: [
         Checkbox(
           value: _bodyBlocks[index].checked,
-          onChanged: (bool? newValue) {
-            setState(() {
-              _bodyBlocks[index] = Block(
-                type: 'checklist',
-                text: _bodyBlocks[index].text,
-                checked: newValue ?? false,
-              );
-            });
-            widget.onChanged(); // notify parent of change
-          },
+          onChanged: widget.readOnly
+              ? null
+              : (bool? newValue) {
+                  setState(() {
+                    _bodyBlocks[index] = Block(
+                      type: 'checklist',
+                      text: _bodyBlocks[index].text,
+                      checked: newValue ?? false,
+                    );
+                  });
+                  widget.onChanged(); // notify parent of change
+                },
         ),
         Expanded(
           child: TextField(
@@ -143,7 +150,8 @@ class _NoteBodyEditorState extends State<NoteBodyEditor> {
                   ? TextDecoration.lineThrough
                   : TextDecoration.none,
             ),
-            onSubmitted: (value) => _addBlock('checklist'),
+            onSubmitted: widget.readOnly ? null : (value) => _addBlock('checklist'),
+            enabled: !widget.readOnly,
           ),
         ),
       ],

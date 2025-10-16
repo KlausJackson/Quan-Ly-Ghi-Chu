@@ -164,6 +164,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isReadOnly = widget.note?.isDeleted ?? false;
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -186,18 +187,18 @@ class _NoteEditPageState extends State<NoteEditPage> {
           ],
         ),
         actions: [
-          // --- DELETE BUTTON (only shown in edit mode) ---
-          if (widget.note != null)
+          // --- DELETE BUTTON (only shown in edit mode and when not read-only) ---
+          if (widget.note != null && !isReadOnly)
             IconButton(
               icon: const Icon(Icons.delete_outline),
               tooltip: 'Xoa',
               onPressed: _deleteNote,
             ),
-          // --- SAVE BUTTON ---
+          // --- SAVE BUTTON (hidden/disabled when read-only) ---
           IconButton(
             icon: const Icon(Icons.save),
             tooltip: 'Luu',
-            onPressed: _isChanged ? _saveNote : null,
+            onPressed: (!isReadOnly && _isChanged) ? _saveNote : null,
           ),
         ],
       ),
@@ -213,6 +214,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
                 border: InputBorder.none,
               ),
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              enabled: !isReadOnly,
             ),
 
             const SizedBox(height: 5),
@@ -224,6 +226,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
                 initialBlocks: _bodyBlocks,
                 bodyControllers: _bodyControllers,
                 onChanged: _checkForChanges,
+                readOnly: isReadOnly,
               ),
             ),
           ],

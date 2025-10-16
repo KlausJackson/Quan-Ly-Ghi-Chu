@@ -30,7 +30,7 @@ class NoteRepositoryImpl implements NoteRepository {
     String? query,
     String sortBy = 'updatedAt',
     int sortOrder = 1,
-    int page = 0,
+  int page = 1,
     int pageSize = 20,
     bool isDeleted = false,
   }) {
@@ -230,18 +230,69 @@ class NoteRepositoryImpl implements NoteRepository {
   // DELETE, PERMANENT DELETE, RESTORE, GET TRASHED
   @override
   Future<void> deleteNote(String? uuid) async {
-    // isDeleted = true
+    if (uuid == null) return;
+    final user = await _getCurrentUser();
+    final localNotes = await noteLocal.getNotes(user);
+    final index = localNotes.indexWhere((n) => n.uuid == uuid);
+    if (index == -1) return;
+    final note = localNotes[index];
+    final updated = NoteModel(
+      uuid: note.uuid,
+      title: note.title,
+      body: note.body,
+      isPinned: note.isPinned,
+      tagUUIDs: note.tagUUIDs,
+      isDeleted: true,
+      updatedAt: DateTime.now(),
+    );
+    // try remote if connected; update local with server response when available
+    try {
+      if (await networkInfo.isConnected) {
+        final serverNote = await noteRemote.deleteNote(uuid);
+        await noteLocal.upsertNote(user, serverNote);
+        return;
+      }
+    } catch (e) {
+      // Surface remote errors to caller so UI can show them
+      rethrow;
+    }
+    await noteLocal.upsertNote(user, updated);
   }
 
   @override
   Future<void> permanentlyDeleteNote(String? uuid) async {
-    // xoa khoi server va local
+    if (uuid == null) return;
+    final user = await _getCurrentUser();
+    try {
+      if (await networkInfo.isConnected) {
+        await noteRemote.permanentlyDeleteNote(uuid);
+        await noteLocal.deleteNote(user, uuid);
+        return;
+      }
+    } catch (e) {
+      rethrow;
+    }
+    await noteLocal.deleteNote(user, uuid);
   }
 
   @override
   Future<List<Note>> getTrashedNotes() async {
-    // su dung _filterAndSortLocalNotes voi isDeleted = true cho tien dung
+    // Mirror getNotes: prefer server when connected and user is set
     final user = await _getCurrentUser();
+    if (await networkInfo.isConnected && user != 'default') {
+      try {
+        final queryParameters = {'skip': 0, 'limit': 1000};
+        final result = await noteRemote.getTrashedNotes(queryParameters);
+    final List<NoteModel> serverNotes = (result['notes'] as List)
+      .map((json) => NoteModel.fromJson(json))
+      .where((n) => n.isDeleted == true)
+      .toList();
+    return serverNotes;
+      } catch (e) {
+        // fallback to local
+      }
+    }
+
     final localNotes = await noteLocal.getNotes(user);
     final trashedNotes = _filterAndSortLocalNotes(localNotes, isDeleted: true);
     return trashedNotes;
@@ -249,6 +300,30 @@ class NoteRepositoryImpl implements NoteRepository {
 
   @override
   Future<void> restoreNote(String? uuid) async {
-    // isDeleted = false
+    if (uuid == null) return;
+    final user = await _getCurrentUser();
+    final localNotes = await noteLocal.getNotes(user);
+    final index = localNotes.indexWhere((n) => n.uuid == uuid);
+    if (index == -1) return;
+    final note = localNotes[index];
+    final updated = NoteModel(
+      uuid: note.uuid,
+      title: note.title,
+      body: note.body,
+      isPinned: note.isPinned,
+      tagUUIDs: note.tagUUIDs,
+      isDeleted: false,
+      updatedAt: DateTime.now(),
+    );
+    try {
+      if (await networkInfo.isConnected) {
+        final serverNote = await noteRemote.restoreNote(uuid);
+        await noteLocal.upsertNote(user, serverNote);
+        return;
+      }
+    } catch (e) {
+      rethrow;
+    }
+    await noteLocal.upsertNote(user, updated);
   }
 }

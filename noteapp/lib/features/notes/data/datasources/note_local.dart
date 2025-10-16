@@ -24,4 +24,9 @@ class NoteLocal {
     };
     await box.putAll(notesMap);
   } 
+
+  Future<void> deleteNote(String userKey, String uuid) async {
+    final box = await _getNotesBox(userKey);
+    await box.delete(uuid);
+  }
 }

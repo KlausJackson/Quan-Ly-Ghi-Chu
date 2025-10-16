@@ -137,11 +137,71 @@ class NoteProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getTrashedNotes() async {}
+  Future<void> getTrashedNotes() async {
+    _status = NoteStatus.loading;
+    notifyListeners();
 
-  Future<void> deleteNote(String uuid) async {}
+    try {
+      _trashedNotes = await getTrashedNotesUsecase();
+      _status = NoteStatus.success;
+    } catch (e) {
+      _status = NoteStatus.error;
+      _message = 'Failed to get trashed notes: $e';
+    }
+    notifyListeners();
+  }
 
-  Future<void> restoreNote(String uuid) async {}
+  Future<void> deleteNote(String uuid) async {
+    try {
+      final note = _notes.firstWhere((n) => n.uuid == uuid);
+      await deleteNoteUsecase(note);
 
-  Future<void> permanentlyDeleteNote(String uuid) async {}
+      _notes.removeWhere((n) => n.uuid == uuid);
+      _trashedNotes.insert(0, note);
+      _totalNotes = (_totalNotes > 0) ? _totalNotes - 1 : 0;
+      _status = NoteStatus.success;
+      _message = 'Note moved to trash';
+      await getTrashedNotes();
+      notifyListeners();
+    } catch (e) {
+      _status = NoteStatus.error;
+      _message = 'Failed to delete note: $e';
+      notifyListeners();
+    }
+  }
+
+  Future<void> restoreNote(String uuid) async {
+    try {
+      final note = _trashedNotes.firstWhere((n) => n.uuid == uuid);
+      await restoreNoteUsecase(note);
+
+      _trashedNotes.removeWhere((n) => n.uuid == uuid);
+      await getNotes('', 'updatedAt', 1, 1, 20);
+      await getTrashedNotes();
+      _status = NoteStatus.success;
+      _message = 'Note restored';
+      notifyListeners();
+    } catch (e) {
+      _status = NoteStatus.error;
+      _message = 'Failed to restore note: $e';
+      notifyListeners();
+    }
+  }
+
+  Future<void> permanentlyDeleteNote(String uuid) async {
+    try {
+      final note = _trashedNotes.firstWhere((n) => n.uuid == uuid);
+      await permanentlyDeleteNoteUsecase(note);
+      _trashedNotes.removeWhere((n) => n.uuid == uuid);
+      await getTrashedNotes();
+      _status = NoteStatus.success;
+      _message = 'Note permanently deleted';
+      notifyListeners();
+    } catch (e) {
+      _status = NoteStatus.error;
+      _message = 'Failed to permanently delete note: $e';
+      notifyListeners();
+      rethrow;
+    }
+  }
 }

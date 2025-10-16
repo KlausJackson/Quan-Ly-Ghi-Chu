@@ -15,6 +15,16 @@ class NoteRemote {
     return response['data'];
   }
 
+  Future<Map<String, dynamic>> getTrashedNotes(
+    Map<String, dynamic> queryParameters,
+  ) async {
+    final response = await apiClient.get(
+      '/notes/trash',
+      queryParameters: queryParameters,
+    );
+    return response['data'];
+  }
+
   Future<NoteModel> createNote(NoteModel note) async {
     final response = await apiClient.post('/notes', note.toJson());
     return NoteModel.fromJson(response['data']);
@@ -22,6 +32,21 @@ class NoteRemote {
 
   Future<NoteModel> updateNote(NoteModel note) async {
     final response = await apiClient.put('/notes/${note.uuid}', note.toJson());
+    return NoteModel.fromJson(response['data']);
+  }
+
+  Future<NoteModel> deleteNote(String uuid) async {
+    final response = await apiClient.delete('/notes/$uuid');
+    return NoteModel.fromJson(response['data']);
+  }
+
+  Future<NoteModel> restoreNote(String uuid) async {
+    final response = await apiClient.put('/notes/$uuid/restore', {});
+    return NoteModel.fromJson(response['data']);
+  }
+
+  Future<NoteModel> permanentlyDeleteNote(String uuid) async {
+    final response = await apiClient.delete('/notes/trash/$uuid');
     return NoteModel.fromJson(response['data']);
   }
 
