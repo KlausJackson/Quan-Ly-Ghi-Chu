@@ -1,6 +1,5 @@
 # Note Manager Flutter
 
-Switch to clean-architecture_notes for full code source (except for tags). <br>
 See API requests and responses examples in [Task Manager](https://github.com/KlausJackson/Task-Manager)
 
 ## API
@@ -41,14 +40,13 @@ See API requests and responses examples in [Task Manager](https://github.com/Kla
 
 ## Project Architecture
 
-### NEW
+### Clean Architecture 
+
+Select clean-architecture_notes branch to view the code source for this (it doesn't have tags).
 
 ```bash
 lib/
 ├── core/
-# │   ├── error/
-# │   │   ├── exceptions.dart
-# │   │   └── failure.dart
 │   ├── network/
 │   │   └── api_client.dart   
 │   ├── routing/
@@ -180,7 +178,9 @@ lib/
 └── main.dart
 ```
 
-### OLD
+### MVVM (main branch)
+
+This will be updated to use all API endpoints from [Task Manager](https://github.com/KlausJackson/Task-Manager).
 
 ```bash
 lib/
@@ -239,6 +239,8 @@ lib/
 
 ## Presentation
 
+This part is outdated and won't be updated. <br>
+
 ### Widgets
 
 | Custom Widget           | Description                                                          |
@@ -250,7 +252,7 @@ lib/
 
 ### Screens
 
-This part is outdated. <br>
+
 BottomNavigation to switch between Note List, Tag List, Trashed List.
 
 | Component           | API                                                                                         | Standard Widgets                                                                                         | Reusable Widgets                 | Description                                                                                                                                                                                     |
