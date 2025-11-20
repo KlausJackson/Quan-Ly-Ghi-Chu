@@ -40,6 +40,46 @@ See API requests and responses examples in [Task Manager](https://github.com/Kla
 
 ## Project Architecture
 
+### Full Source Code
+
+This will be the final project architecture that I choose to use for [Task Manager](https://github.com/KlausJackson/Task-Manager).
+
+```bash
+lib/
+├── core/  # Shared stuff (HTTP Client, DB setup, Theme)
+│   ├── api_client.dart
+│   └── local_db.dart
+│
+├── features/
+│   ├── auth/
+│   │   ├── auth_model.dart        # The Data Class
+│   │   ├── auth_remote.dart       # REST calls (GET, POST)
+│   │   ├── auth_local.dart        # Hive/Storage calls
+│   │   ├── auth_repository.dart   # THE BRAIN
+│   │   └── auth_provider.dart     # THE UI STATE 
+│   │
+│   ├── notes/
+│   │   ├── note_model.dart
+│   │   ├── note_remote.dart
+│   │   ├── note_local.dart
+│   │   ├── note_repository.dart
+│   │   └── note_provider.dart
+│   │
+│   ├── tags/
+│   │   ├── tag_model.dart
+│   │   ├── tag_remote.dart
+│   │   ├── tag_local.dart
+│   │   ├── tag_repository.dart
+│   │   └── tag_provider.dart
+│
+├── ui/ 
+│   ├── auth/
+│   ├── notes/
+│   └── shared_widgets/
+│
+└── main.dart
+```
+
 ### Clean Architecture 
 
 Select clean-architecture_notes branch to view the code source for this (it doesn't have tags).
@@ -88,84 +128,41 @@ lib/
 │   │           ├── user_list.dart
 │   │           └── auth_form.dart
 │   │
-│   ├── sync/
-│   │   ├── data/
-│   │   │   ├── datasources/
-│   │   │   │   └── sync_remote.dart
-│   │   │   └── repositories/
-│   │   │       └── sync_repository_impl.dart
-│   │   ├── domain/
-│   │   │   ├── repositories/
-│   │   │   │   └── sync_repository.dart
-│   │   │   └── usecases/
-│   │   │       └── perform_sync.dart 
-│   │   └── presentation/
-│   │       └── provider/
-│   │           └── sync_provider.dart
-│   │
 │   ├── notes/
-│   │   ├── note_dependencies.dart
-│   │   ├── data/
-│   │   │   ├── datasources/
-│   │   │   │   ├── note_remote.dart
-│   │   │   │   └── note_local.dart
-│   │   │   ├── models/
-│   │   │   │   ├── block_model.dart
-│   │   │   │   └── note_model.dart
-│   │   │   └── repositories/
-│   │   │       └── note_repository_impl.dart
-│   │   ├── domain/
-│   │   │   ├── entities/
-│   │   │   │   ├── block.dart
-│   │   │   │   └── note.dart
-│   │   │   ├── repositories/
-│   │   │   │   └── note_repository.dart
-│   │   │   └── usecases/
-│   │   │       ├── create_note.dart
-│   │   │       ├── get_notes.dart
-│   │   │       ├── update_note.dart
-│   │   │       ├── delete_note.dart
-│   │   │       ├── get_trashed_notes.dart
-│   │   │       ├── restore_note.dart
-│   │   │       └── permanently_delete_note.dart
-│   │   └── presentation/
-│   │       ├── provider/
-│   │       │   └── note_provider.dart
-│   │       ├── pages/
-│   │       │   ├── note_page.dart
-│   │       │   ├── edit_page.dart
-│   │       │   └── trash_page.dart
-│   │       └── widgets/
-│   │           ├── note_card.dart
-│   │           └── search_filter_bar.dart
-│   │
-│   └── tags/
-│       ├── tag_dependencies.dart
+│       ├── note_dependencies.dart
 │       ├── data/
 │       │   ├── datasources/
-│       │   │   ├── tag_remote.dart
-│       │   │   └── tag_local.dart
+│       │   │   ├── note_remote.dart
+│       │   │   └── note_local.dart
 │       │   ├── models/
-│       │   │   └── tag_model.dart
+│       │   │   ├── block_model.dart
+│       │   │   └── note_model.dart
 │       │   └── repositories/
-│       │       └── tag_repository_impl.dart
+│       │       └── note_repository_impl.dart
 │       ├── domain/
 │       │   ├── entities/
-│       │   │   └── tag.dart
+│       │   │   ├── block.dart
+│       │   │   └── note.dart
 │       │   ├── repositories/
-│       │   │   └── tag_repository.dart
+│       │   │   └── note_repository.dart
 │       │   └── usecases/
-│       │       ├── create_tag.dart
-│       │       ├── get_tags.dart
-│       │       ├── update_tag.dart
-│       │       └── delete_tag.dart
+│       │       ├── create_note.dart
+│       │       ├── get_notes.dart
+│       │       ├── update_note.dart
+│       │       ├── delete_note.dart
+│       │       ├── get_trashed_notes.dart
+│       │       ├── restore_note.dart
+│       │       └── permanently_delete_note.dart
 │       └── presentation/
 │           ├── provider/
-│           │   └── tag_provider.dart
+│           │   └── note_provider.dart
 │           ├── pages/
-│           │   └── tag_list_page.dart
+│           │   ├── note_page.dart
+│           │   ├── edit_page.dart
+│           │   └── trash_page.dart
 │           └── widgets/
-│               └── tag_chip.dart
+│               ├── note_card.dart
+│               └── search_filter_bar.dart
 │
 ├── presentation/ 
 │   ├── pages/ 
@@ -180,7 +177,7 @@ lib/
 
 ### MVVM (main branch)
 
-This will be updated to use all API endpoints from [Task Manager](https://github.com/KlausJackson/Task-Manager).
+This won't be updated. It's not finished, it only has auth features for now.
 
 ```bash
 lib/
