@@ -48,15 +48,16 @@ This will be the final project architecture that I choose to use for [Task Manag
 lib/
 ├── core/  # Shared stuff (HTTP Client, DB setup, Theme)
 │   ├── api_client.dart
+│   ├── network_info.dart
 │   └── local_db.dart
 │
 ├── features/
 │   ├── auth/
-│   │   ├── auth_model.dart        # The Data Class
-│   │   ├── auth_remote.dart       # REST calls (GET, POST)
-│   │   ├── auth_local.dart        # Hive/Storage calls
-│   │   ├── auth_repository.dart   # THE BRAIN
-│   │   └── auth_provider.dart     # THE UI STATE 
+│   │   ├── auth_model.dart       # The Data Class
+│   │   ├── auth_remote.dart      # REST calls (GET, POST)
+│   │   ├── auth_local.dart       # Hive/Storage calls
+│   │   ├── auth_repository.dart  # THE BRAIN
+│   │   └── auth_provider.dart    # THE UI STATE 
 │   │
 │   ├── notes/
 │   │   ├── note_model.dart
@@ -72,11 +73,32 @@ lib/
 │   │   ├── tag_repository.dart
 │   │   └── tag_provider.dart
 │
-├── ui/ 
+├── presentations/ 
 │   ├── auth/
+│   │   ├── auth_page.dart
+│   │   └── widgets/
+│   │       ├── auth_form.dart
+│   │       └── user_list.dart
+│   │ 
 │   ├── notes/
+│   │   ├── note_page.dart
+│   │   ├── trash_page.dart
+│   │   └── edit_page.dart
+│   │   └── widgets/
+│   │       ├── edit_body.dart
+│   │       ├── note_card.dart
+│   │       ├── pagination.dart
+│   │       ├── search_bar.dart
+│   │       └── editor_toolbar.dart
+│   │ 
+│   ├── tags/
+│   │   ├── tag_page.dart
+│   │   └── widgets/
+│   │       └── tag_card.dart
+│   │ 
 │   └── shared_widgets/
-│
+│       └── show_dialogs.dart
+│    
 └── main.dart
 ```
 

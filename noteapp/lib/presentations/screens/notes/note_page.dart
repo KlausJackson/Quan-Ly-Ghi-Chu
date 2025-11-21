@@ -1,0 +1,247 @@
+import 'package:flutter/material.dart';
+import 'package:noteapp/features/notes/note_model.dart';
+import 'package:noteapp/presentations/screens/notes/widgets/pagination.dart';
+import 'package:noteapp/presentations/screens/notes/widgets/search_bar.dart';
+import 'package:provider/provider.dart';
+import 'package:noteapp/features/notes/note_provider.dart';
+import 'package:noteapp/presentations/screens/notes/widgets/note_card.dart';
+
+class NotesPage extends StatefulWidget {
+  const NotesPage({super.key});
+
+  @override
+  State<NotesPage> createState() => _NotesPageState();
+}
+
+class _NotesPageState extends State<NotesPage> {
+  late NoteProvider _noteProvider;
+
+  // --- State Variables ---
+  String _query = '';
+  String _sortBy = 'updatedAt';
+  bool _isDescending = true;
+  int _currentPage = 1;
+  int _pageSize = 10;
+
+  @override
+  void initState() {
+    super.initState();
+    _noteProvider = Provider.of<NoteProvider>(context, listen: false);
+    _noteProvider.addListener(_handleNoteChanges);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchNotes();
+    });
+  }
+
+  @override
+  void dispose() {
+    _noteProvider.removeListener(_handleNoteChanges);
+    super.dispose();
+  }
+
+  void _onSearchParametersChanged(Map<String, dynamic> params) {
+    setState(() {
+      _query = params['query'];
+      _sortBy = params['sortBy'];
+      _isDescending = params['isDescending'];
+      _currentPage = 1; // Always reset to page 1 on a new search
+    });
+    _fetchNotes();
+  }
+
+  void _handleNoteChanges() {
+    final message = _noteProvider.popMessage;
+    if (message != null && mounted) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    }
+  } // show message
+
+  void _onPageChanged(int newPage) {
+    setState(() {
+      _currentPage = newPage;
+    });
+    _fetchNotes();
+  }
+
+  void _onPageSizeChanged(int newSize) {
+    setState(() {
+      _pageSize = newSize;
+      _currentPage = 1;
+    });
+    _fetchNotes();
+  }
+
+  Future<void> _fetchNotes() async {
+    final sortOrder = _isDescending ? 1 : 0;
+    if (mounted) {
+      await context.read<NoteProvider>().getNotes(
+        _query,
+        _sortBy,
+        sortOrder,
+        _currentPage,
+        _pageSize,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<NoteProvider>(
+      builder: (context, provider, _) {
+        // Use Stack to layer the Floating Action Button on top of the content.
+        return Stack(
+          children: [
+            Column(
+              children: [
+                // --- SearchBar ---
+                SearchBarFilter(onSearchChanged: _onSearchParametersChanged),
+
+                // --- Notes List ---
+                Expanded(
+                  child: _buildBody(provider),
+                ), // fill the remaining space.
+                // --- Pagination ---
+                Pagination(
+                  currentPage: _currentPage,
+                  pageSize: _pageSize,
+                  totalItems: provider.totalNotes,
+                  onPageChanged: _onPageChanged,
+                  onPageSizeChanged: _onPageSizeChanged,
+                ),
+              ],
+            ),
+
+            // --- Floating Action Button ---
+            // Positioned places the button in the bottom-right corner.
+            Positioned(
+              bottom: 80, // leave space above pagination
+              right: 16,
+              child: FloatingActionButton(
+                heroTag: 'note_add_fab',
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/notes/create');
+                },
+                child: const Icon(Icons.add),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildBody(NoteProvider provider) {
+    if (provider.status == NoteStatus.loading && provider.notes.isEmpty) {
+      return const Center(
+        key: ValueKey('loading'),
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    if (provider.notes.isEmpty) {
+      return Center(
+        key: const ValueKey('empty'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.note_add_outlined, size: 48, color: Colors.grey),
+            const SizedBox(height: 16),
+            const Text(
+              'No notes found.',
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Separate Pinned notes
+    // Note: This assumes the API/Repo returns ALL notes for the current page.
+    // If pinned notes are on Page 2, they won't show here.
+    // Ideally, backend should always return Pinned notes at the top of Page 1.
+    final pinnedNotes = provider.notes.where((n) => n.isPinned).toList();
+    final otherNotes = provider.notes.where((n) => !n.isPinned).toList();
+
+    return RefreshIndicator(
+      onRefresh: () async {
+        setState(() => _currentPage = 1);
+        await context.read<NoteProvider>().performSync();
+      },
+      child: ListView(
+        padding: const EdgeInsets.only(bottom: 80), // Space for FAB
+        children: [
+          // --- PINNED SECTION ---
+          if (pinnedNotes.isNotEmpty) ...[
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(
+                'Đã ghim',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
+            ...pinnedNotes.map((note) => _buildDismissibleCard(note, provider)),
+            const Divider(),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(
+                'Khác',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
+          ],
+
+          // --- OTHERS SECTION ---
+          ...otherNotes.map((note) => _buildDismissibleCard(note, provider)),
+        ],
+      ),
+    );
+  }
+
+  // Extracted helper to avoid code duplication
+  Widget _buildDismissibleCard(NoteModel note, NoteProvider provider) {
+    return Dismissible(
+      key: Key(note.id),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        color: Colors.red,
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: const Icon(Icons.delete, color: Colors.white),
+      ),
+      confirmDismiss: (direction) async {
+        return await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Confirm Deletion'),
+            content: const Text('Are you sure you want to delete this note?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('Delete'),
+              ),
+            ],
+          ),
+        );
+      },
+      onDismissed: (_) async {
+        await provider.deleteNote(note);
+      },
+      child: NoteCard(note: note),
+    );
+  }
+}
